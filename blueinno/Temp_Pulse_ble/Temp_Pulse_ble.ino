@@ -24,7 +24,7 @@ void setup()
 }
     
 void loop() // per 1 second
-{ 
+{   
   // PULSE
   int tm = 0;
   while (tm < 500) {
@@ -38,13 +38,14 @@ void loop() // per 1 second
       float temp = (3.0 * val / 1024.0) * 100;
 
       Serial.print("TEMP: ");
-      Serial.println(temp);
-          
+      Serial.print(temp);
+      
       RFduinoBLE.sendFloat(temp * -1.0);
     }
   }
 
   // PULSE BLE
+  Serial.print(", ");
   Serial.print("BPM: ");
   Serial.println(BPM);
     
