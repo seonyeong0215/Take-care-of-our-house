@@ -9,7 +9,7 @@ class Webservice(object):
 
 	def stat(self, avgTemp, avgBpm):
 		now = datetime.now()
-		time = now.hour+':'+now.minute
+		time = str(now.hour) + ':' + str(now.minute)
 
 		params = {'avgTemp':avgTemp, 'avgBpm':avgBpm, 'time':time}
 		response = requests.get(self.urlStat, params=params)
@@ -24,7 +24,7 @@ class Webservice(object):
 
 	def alarm(self, status, temp, bpm):
 		now = datetime.now()
-		time = now.hour+':'+now.minute
+		time = str(now.hour) + ':' + str(now.minute)
 
 		params = {'status': status, 'temp':temp, 'bpm':bpm, 'time':time}
 		response = requests.get(self.urlAlarm, params=params)
