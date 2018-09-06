@@ -161,15 +161,15 @@ class Video:
 			color = (0, 255, 0)
 
 			if fall == 0 and (w - x) < (preW *2):
-                fall = 1
+				fall = 1
 				color = (0, 0, 255)
 				cv2.line(self.frame, (x, y), (x + w, y + h), color, 2)
 				cv2.line(self.frame, (x + w, y), (x , y + h), color, 2)
-                detectStatus = "Alarm, fall!"
-                if not person.alarmReportedFall:
-                	var = self.myble.getValue()
-                	self.webservice.alarmToFall(var['temp'], var['bpm'])
-                	person.alarmReportedFall = 1
+				detectStatus = "Alarm, fall!"
+				if not person.alarmReportedFall:
+					var = self.myble.getValue()
+					self.webservice.alarmToFall(var['temp'], var['bpm'])
+					person.alarmReportedFall = 1
 
 			if person.alert:
 				color = (0, 0, 255)
@@ -177,10 +177,10 @@ class Video:
 				cv2.line(self.frame, (x + w, y), (x , y + h), color, 2)
 				detectStatus = "Alarm, not moving"
 				if not person.alarmReportedNotmoving:
-                	var = self.myble.getValue()
-                	self.webservice.alarmToNotMoving(var['temp'], var['bpm'])
-                    person.alarmReportedNotmoving = 1
-                    person.alert = 0
+					var = self.myble.getValue()
+					self.webservice.alarmToNotMoving(var['temp'], var['bpm'])
+					person.alarmReportedNotmoving = 1
+					person.alert = 0
 
 			cv2.rectangle(self.frame, (x, y), (x + w, y + h), color, 2)
 			cv2.putText(self.frame, "{}".format(cv2.contourArea(contour)), (x, y+h+20), cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 1)
@@ -194,7 +194,7 @@ class Video:
 			self.start = time.time()
 
 			cv2.putText(self.frame, "Status: {}".format(detectStatus), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 140, 255), 1)
-	 		cv2.putText(self.frame, "FPS: {}".format(fps), (400, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 140, 255), 1)
+			cv2.putText(self.frame, "FPS: {}".format(fps), (400, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 140, 255), 1)
 
 	def newLightconditions(self):
 		self.errorcount += 1
