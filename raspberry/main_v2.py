@@ -8,24 +8,24 @@ import video
 import ble
 
 def bleStart():
-	ble = ble.MyBle.instance()
+	myble = ble.MyBle.instance()
 	time.sleep(1)
-	ble.readValueInf()
+	myble.readValueInf()
 
 def videoStart():
-	video = video.Video()
+	myvideo = video.Video()
 	time.sleep(1)
-	video.nextFrame()
-	video.testBackgroundFrame()
+	myvideo.nextFrame()
+	myvideo.testBackgroundFrame()
 
 	while 1:
-		video.nextFrame()
-		video.testBackgroundFrame()
-		video.updateBackground()
-		video.compare()
-		video.showFrame()
-		video.testSettings()
-		if video.testDestroy():
+		myvideo.nextFrame()
+		myvideo.testBackgroundFrame()
+		myvideo.updateBackground()
+		myvideo.compare()
+		myvideo.showFrame()
+		myvideo.testSettings()
+		if myvideo.testDestroy():
 			sys.exit()
 
 
