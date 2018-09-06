@@ -48,3 +48,4 @@ class Webservice(object):
 		if now.minute <= 9 and now.minute >= 0:
 			time += '0'
 		time += str(now.minute)
+		return time
