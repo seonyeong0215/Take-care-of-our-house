@@ -8,9 +8,7 @@ class Webservice(object):
 		self.urlAlarm = self.myurl + '/RegisterAlarm.php'
 
 	def stat(self, avgTemp, avgBpm):
-		now = datetime.now()
-		time = str(now.hour) + ':' + str(now.minute)
-
+		time = self.getTime()
 		params = {'avgTemp':avgTemp, 'avgBpm':avgBpm, 'time':time}
 		response = requests.get(self.urlStat, params=params)
 		print(response)
@@ -23,9 +21,7 @@ class Webservice(object):
 	'''
 
 	def alarm(self, status, temp, bpm):
-		now = datetime.now()
-		time = str(now.hour) + ':' + str(now.minute)
-
+		time = self.getTime()
 		params = {'status': status, 'temp':temp, 'bpm':bpm, 'time':time}
 		response = requests.get(self.urlAlarm, params=params)
 		print(response)
@@ -41,3 +37,14 @@ class Webservice(object):
 
 	def alarmToAbnormalBpm(self, temp, bpm):
 		self.alarm(3, temp, bpm)
+
+	def getTime(self):
+		now = datetime.now()
+		time = ''
+		if now.hour <= 9 and now.hour >= 0:
+			time += '0'
+		time += str(now.hour)
+		time += ':'
+		if now.minute <= 9 and now.minute >= 0:
+			time += '0'
+		time += str(now.minute)
