@@ -13,7 +13,7 @@ class Ble:
 		p = bluepy.btle.Peripheral(self.bt,"random")
 		services = p.getServices()		 
 		for service in services:
-		   print(service)
+			print(service)
 
 		self.bi_service_uuid = "2220"
 		print(self.bi_service_uuid)
@@ -24,7 +24,7 @@ class Ble:
 		print("Handle   UUID                                Properties")
 		print("-------------------------------------------------------")
 		for ch in chList:
-		    print("  0x" + format(ch.getHandle(),'02X') + "   " + str(ch.uuid) + " " + ch.propertiesToString())
+			print("  0x" + format(ch.getHandle(),'02X') + "   " + str(ch.uuid) + " " + ch.propertiesToString())
 
 		self.bi_char_uuid = "00002221-0000-1000-8000-00805f9b34fb"
 		print(self.bi_char_uuid)
@@ -38,26 +38,28 @@ class Ble:
 
 		sensorValue = self.biService.getCharacteristics(self.bi_char_uuid)[0]
 		while 1:
-		    # Read Vars & Get Avgs
-		   	val = 0
+			# 1. Read Vars & Get Avgs
+			val = 0
 
-		    while val >= 0:	# temp < 0
-		       	val = binToFloat(sensorValue.read())
+			# temp < 0
+			while val >= 0:
+				val = binToFloat(sensorValue.read())
 			self.vars['temp'] = val * -1
-		    calAvg(self.avgs['temp'], self.vars['temp'])
+			calAvg(self.avgs['temp'], self.vars['temp'])
+			
+			# bpm >= 0
+			while val <= 0:
+				val = binToFloat(sensorValue.read())
+			self.vars['bpm'] = val
+			calAvg(self.avgs['bpm'], self.vars['bpm'])
 
-		    while val <= 0:	# bpm >= 0
-		        val = binToFloat(sensorValue.read())
-		    self.vars['bpm'] = val
-		    calAvg(self.avgs['bpm'], self.vars['bpm'])
-
-		    # Send Avgs
-	        curTime = time.gmtime(time.time()).tm_hour
-	        if curTime != prevTime:
-	        	self.webservice.stat(self.avgs['temp']['avg'], self.avgs['bpm']['avg'])
-		        prevTime = curTime
-		       	self.avgs['temp']['avg'] = self.avgs['temp']['n'] = 0
-		       	self.avgs['bpm']['avg'] = self.avgs['bpm']['n'] = 0
+			# 2. Send Avgs
+			curTime = time.gmtime(time.time()).tm_hour
+			if curTime != prevTime:
+				self.webservice.stat(self.avgs['temp']['avg'], self.avgs['bpm']['avg'])
+				prevTime = curTime
+				self.avgs['temp']['avg'] = self.avgs['temp']['n'] = 0
+				self.avgs['bpm']['avg'] = self.avgs['bpm']['n'] = 0
 
 			time.sleep(0.2)
 
