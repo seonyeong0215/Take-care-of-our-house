@@ -31,13 +31,13 @@ class Webservice(object):
 		print(response)
 
 	def alarmToNotMoving(self, temp, bpm):
-		alarm(0, temp, bpm)
+		self.alarm(0, temp, bpm)
 
 	def alarmToFall(self, temp, bpm):
-		alarm(1, temp, bpm)
+		self.alarm(1, temp, bpm)
 
 	def alarmToAbnormalTemp(self, temp, bpm):
-		alarm(2, temp, bpm)
+		self.alarm(2, temp, bpm)
 
 	def alarmToAbnormalBpm(self, temp, bpm):
-		alarm(3, temp, bpm)
+		self.alarm(3, temp, bpm)
