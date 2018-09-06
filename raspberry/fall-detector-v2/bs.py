@@ -63,4 +63,3 @@ class Bs:
 			if self.backgroundFrame is None:
 				self.updateBackground(frame)
 				self.frameCount = 1
-		

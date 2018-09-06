@@ -13,20 +13,21 @@ import person
 import settings
 import webservice
 import bs
+import ble
 
 class Video:
-    
-    
 	def __init__(self):
 		self.settings = settings.Settings()
 		self.camera = cv2.VideoCapture(self.settings.source)
 		self.bs = bs.Bs()
 		self.persons = person.Persons(self.settings.movementMaximum, self.settings.movementMinimum, self.settings.movementTime)
 		self.start = time.time()
-		self.webservice = webservice.Webservice(self.settings.location, self.settings.phone)
+		self.webservice = webservice.Webservice()
 		self.errorcount = 0
 		self.alertLog = []
 		self.frameCount = 1
+
+		self.myble = ble.MyBle.instance()
 
 	def nextFrame(self):
 		grabbed, self.frame = self.camera.read()
@@ -61,7 +62,7 @@ class Video:
 		self.bs.resetBackgroundIfNeeded(self.frame)
 		self.persons = person.Persons(self.settings.movementMaximum, self.settings.movementMinimum, self.settings.movementTime)
 		#self.frameCount = 1
-		#print 'resetbackgroundFrame'
+		#print(resetbackgroundFrame)
 
 	def testBackgroundFrame(self):
 		key = cv2.waitKey(1) & 0xFF
@@ -76,49 +77,49 @@ class Video:
 		key = cv2.waitKey(1) & 0xFF
 		if key == ord("0"):
 			self.settings.minArea += 50
-			print "minArea: " , self.settings.minArea
+			print("minArea: " , self.settings.minArea)
 		if key == ord("9"):
 			self.settings.minArea -= 50
-			print "minArea: " , self.settings.minArea
+			print("minArea: " , self.settings.minArea)
 		if key == ord("8"):
 			self.settings.dilationPixels += 1
-			print "dilationPixels: " , self.settings.dilationPixels
+			print("dilationPixels: " , self.settings.dilationPixels)
 		if key == ord("7"):
 			self.settings.dilationPixels -= 1
-			print "dilationPixels: " , self.settings.dilationPixels
+			print("dilationPixels: " , self.settings.dilationPixels)
 		if key == ord("6"):
 			self.settings.thresholdLimit += 1
-			print "thresholdLimit: " , self.settings.thresholdLimit
+			print("thresholdLimit: " , self.settings.thresholdLimit)
 		if key == ord("5"):
 			self.settings.thresholdLimit -= 1
-			print "thresholdLimit: " , self.settings.thresholdLimit
+			print("thresholdLimit: " , self.settings.thresholdLimit)
 		if key == ord("4"):
 			self.settings.movementMaximum += 1
-			print "movementMaximum: " , self.settings.movementMaximum
+			print("movementMaximum: " , self.settings.movementMaximum)
 		if key == ord("3"):
 			self.settings.movementMaximum -= 1
-			print "movementMaximum: " , self.settings.movementMaximum
+			print("movementMaximum: " , self.settings.movementMaximum)
 		if key == ord("2"):
 			self.settings.movementMinimum += 1
-			print "movementMinimum: " , self.settings.movementMinimum 
+			print("movementMinimum: " , self.settings.movementMinimum)
 		if key == ord("1"):
 			self.settings.movementMinimum  -= 1
-			print "movementMinimum: " , self.settings.movementMinimum 
+			print("movementMinimum: " , self.settings.movementMinimum) 
 		if key == ord("o"):
 			if self.settings.useGaussian:
 				self.settings.useGaussian = 0
-				print "useGaussian: off"
+				print("useGaussian: off")
 				self.resetbackgroundFrame()
 			else:
 				self.settings.useGaussian = 1
-				print "useGaussian: on"
+				print("useGaussian: on")
 				self.resetbackgroundFrame()
 		if key == ord("+"):
 			self.settings.movementTime += 1
-			print "movementTime: " , self.settings.movementTime
+			print("movementTime: " , self.settings.movementTime)
 		if key == ord("p"):
 			self.settings.movementTime -= 1
-			print "movementTime : " , self.settings.movementTime
+			print("movementTime : " , self.settings.movementTime)
 
 
 
@@ -143,50 +144,43 @@ class Video:
 
 		detectStatus = "idle"
 
-
-		for contour in contours:
-                    
+		for contour in contours:         
 			if cv2.contourArea(contour) < self.settings.minArea:
 				continue
-			fall=0
+			fall = 0
 
 			(x, y, w, h) = cv2.boundingRect(contour)
 			global preW
-			preW=(w - x)
+			preW = (w - x)
 
 			#if self.thresh.shape[1] < w+50 and self.thresh.shape[0] < h+50:
 				#self.newLightconditions()
-			#	continue
+				#continue
 
 			person = self.persons.addPerson(x, y, w, h)
 			color = (0, 255, 0)
-			
-			
 
-
-
-			if fall==0 and (w - x)<(preW *2):
-                                fall=1
+			if fall == 0 and (w - x) < (preW *2):
+                fall = 1
 				color = (0, 0, 255)
 				cv2.line(self.frame, (x, y), (x + w, y + h), color, 2)
 				cv2.line(self.frame, (x + w, y), (x , y + h), color, 2)
-                                detectStatus = "Alarm, fall!"
-                                if not person.alarmReportedFall:
-                                    self.webservice.alarm("fall", person.id)
-                                    person.alarmReportedFall = 1
-                                
+                detectStatus = "Alarm, fall!"
+                if not person.alarmReportedFall:
+                	var = self.myble.getValue()
+                	self.webservice.alarmToFall(var['temp'], var['bpm'])
+                	person.alarmReportedFall = 1
 
-                            
 			if person.alert:
 				color = (0, 0, 255)
 				cv2.line(self.frame, (x, y), (x + w, y + h), color, 2)
 				cv2.line(self.frame, (x + w, y), (x , y + h), color, 2)
 				detectStatus = "Alarm, not moving"
-				#if 1:
 				if not person.alarmReportedNotmoving:
-                                    self.webservice.alarm("not moving", person.id)
-                                    person.alarmReportedNotmoving = 1
-                                person.alert = 0
+                	var = self.myble.getValue()
+                	self.webservice.alarmToNotMoving(var['temp'], var['bpm'])
+                    person.alarmReportedNotmoving = 1
+                    person.alert = 0
 
 			cv2.rectangle(self.frame, (x, y), (x + w, y + h), color, 2)
 			cv2.putText(self.frame, "{}".format(cv2.contourArea(contour)), (x, y+h+20), cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 1)

@@ -30,7 +30,7 @@ class Webservice(object):
 		response = requests.get(self.urlAlarm, params=params)
 		print(response)
 
-	def alarmToNotMoving(self, temp, bpm): 
+	def alarmToNotMoving(self, temp, bpm):
 		alarm(0, temp, bpm)
 
 	def alarmToFall(self, temp, bpm):

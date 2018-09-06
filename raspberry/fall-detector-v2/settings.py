@@ -26,5 +26,3 @@ class Settings(object):
 		self.movementMaximum = 75 # amount to move to still be the same person
 		self.movementMinimum = 3 # minimum amount to move to not trigger alarm
 		self.movementTime = 10 # number of frames after the alarm is triggered
-		self.location = 'Viikintie 1'
-		self.phone = '01010101010'
