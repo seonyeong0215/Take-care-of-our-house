@@ -3,9 +3,9 @@ from datetime import datetime
 
 class Webservice(object):
 	def __init__(self):
-		# fill blank @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		self.urlStat = ''
-		self.urlAlarm = ''
+		self.myurl = 'http://ec2-54-180-8-72.ap-northeast-2.compute.amazonaws.com'
+		self.urlStat = self.myurl + '/RegisterAvg.php'
+		self.urlAlarm = self.myurl + '/RegisterAlarm.php'
 
 	def stat(self, avgTemp, avgBpm):
 		now = datetime.now()
