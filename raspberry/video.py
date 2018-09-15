@@ -160,12 +160,12 @@ class Video:
 			person = self.persons.addPerson(x, y, w, h)
 			color = (0, 255, 0)
 
-			if fall == 0 and (w - x) < (preW *2):
+			if fall == 0 and (w - x) < (preW * 2):
 				fall = 1
 				color = (0, 0, 255)
 				cv2.line(self.frame, (x, y), (x + w, y + h), color, 2)
 				cv2.line(self.frame, (x + w, y), (x , y + h), color, 2)
-				detectStatus = "Alarm, fall!"
+				detectStatus = "Alarm, fall"
 				if not person.alarmReportedFall:
 					var = self.myble.getValue()
 					self.webservice.alarmToFall(var['temp'], var['bpm'])

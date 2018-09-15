@@ -31,6 +31,10 @@ class Ble:
 
 		self.webservice = webservice.Webservice()
 
+		self.alarmMin = 29.0
+		self.alarmMax = 31.0
+		self.lastAlarm = 0
+
 	def readValueInf(self):
 		prevTime = time.gmtime(time.time()).tm_hour
 		self.avgs = {'temp':{'avg':0, 'n':0}, 'bpm':{'avg':0, 'n':0}}
@@ -47,6 +51,12 @@ class Ble:
 			self.vars['temp'] = val * -1
 			calAvg(self.avgs['temp'], self.vars['temp'])
 			
+			# Check abnormal temperature
+			timedif = int(time.time()) - self.lastAlarm
+			if timedif >= 60 and self.vars['temp'] < self.alarmMin and self.vars['temp'] > self.alarmMax:
+				self.webservice.alarmToAbnormalTemp(self.vars['temp'], self.vars['bpm'])
+				self.lastAlarm = int(time.time())
+
 			# bpm >= 0
 			while val <= 0:
 				val = binToFloat(sensorValue.read())
